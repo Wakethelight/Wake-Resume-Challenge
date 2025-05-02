@@ -16,7 +16,7 @@ jobs:
     - name: Azure Login # authenticate with Azure
       uses: azure/login@v1
       with:
-        creds: ${{secrets.AZURE_CREDENTIALS }}
+        creds: ${{secrets.AZURE_CREDENTIALS}}
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -40,7 +40,7 @@ jobs:
         az functionapp deployment source config-zip \
         --resource-group wake-function-apps \
         --name ${{ secrets.AZURE_FUNCTIONAPP_NAME }} \
-        --src functionapp.zip
+        --src backend/functionapp.zip
         
     - name: Logout from Azure
       run: az logout
