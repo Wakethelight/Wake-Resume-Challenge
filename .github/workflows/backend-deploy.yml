@@ -1,5 +1,9 @@
 name: Deploy Azure Function
 
+permissions:
+  contents: read  # Allow the workflow to read the repository contents
+  actions: read
+
 on:
   push:
     branches:
