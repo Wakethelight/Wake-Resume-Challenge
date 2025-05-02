@@ -43,14 +43,14 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: functionapp_zip
-        path: backend/functionapp.zip
+        path: functionapp.zip
 
     - name: Deploy to Azure Functions via CLI
       run: |
         az functionapp deployment source config-zip \
         --resource-group wake-function-apps \
         --name ${{ secrets.AZURE_FUNCTIONAPP_NAME }} \
-        --src backend/functionapp.zip
+        --src functionapp.zip
         
     - name: Logout from Azure
       run: az logout
