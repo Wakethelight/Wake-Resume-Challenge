@@ -1,0 +1,100 @@
+name: Update Azure Blob
+
+on:
+  push:
+    paths:
+      - '**/*' # Trigger on changes to any file
+      
+permissions:
+  id-token: write  # Grant permission for id-token usage
+  contents: read   # Allow reading repository contents
+  
+jobs:
+  upload-to-blob:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: install Azure CLI  # check if azure cli is installed, and if not, install
+        run: |
+          if ! command -v az &> /dev/null; then
+            echo "Azure CLI not found."
+            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          else
+            az --version
+          fi
+
+    #step 1 checkout the repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0 #fetch the full commit history
+          ref: main
+          
+    #step 2: authenticate with azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        continue-on-error: false # Fail workflow if authentication fails
+      
+    #step 3 identify and upload files changed
+
+    #debug step
+      - name: Debug Git Diff
+        run: |
+          git fetch origin main
+          git log --oneline -n 5
+          echo "Fetching changes..."
+          git diff --name-only FETCH_HEAD HEAD || git ls-files -m || echo "No changes detected."
+          
+      - name: Detect changed files
+        id: changes
+        run: |
+          # Get the list of changed files, handling first commit gracefully
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || git ls-files -m || echo "")
+          echo "Changed files: $CHANGED_FILES"
+
+          # Exclude README.md
+          FILTERED_FILES=$(echo "$CHANGED_FILES" | grep -v "README.md")
+
+          #Debut output
+          echo "Changed files: $CHANGED_FILES"
+          echo "Filtered files: $FILTERED_FILES"
+
+          if [ -z "$FILTERED_FILES" ]; then
+            echo "No eligible files to upload. Exiting..."
+            exit 0  # Gracefully exit if no files need to be uploaded
+          fi
+
+          echo "Filtered files: $FILTERED_FILES"
+          echo "files=$FILTERED_FILES" >> $GITHUB_ENV
+      
+      #debug filterd files 
+      - name: debug filtered files
+        run: |
+          echo "filtered files: ${{ env.files }}"
+          
+      - name: Upload changed files to Blob
+        run: |
+          
+          # loop through each file and upload to Blob
+          for file in ${{ env.files}}; do
+            echo "Uploading $file..."
+            az storage blob upload \
+              --account-name staticsiteblob \
+              --container-name '$web' \
+              --name "$(basename $file)" \
+              --file "$file" \
+              --auth-mode login \
+              --overwrite || exit 1 # Stop if a file upload failes
+          done
+        continue-on-error: false # fail workflow if an error occurs
+
+      # Step 4: Notify on failure
+      - name: Notify Failure
+        if: failure()
+        run: |
+          echo "Workflow failed during file upload or another step."
+          # Add notification logic here (e.g., slack, email)

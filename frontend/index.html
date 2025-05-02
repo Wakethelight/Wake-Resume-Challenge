@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="header"></div>
+<div class="left"></div>
+<div class="stuff">
+  <br><br>
+  <h1>Resume</h1>
+  <h2>Christopher Degner | White Plains, MD | chris.degner@gmail.com</h2>
+	<p>You are visitor number: <div id="visitor-count"></div></p>
+  <script>
+
+    // Function to get the current visitor count
+    
+    document.addEventListener('DOMContentLoaded', () => {
+    
+    const functionURL = 'https://your-cloud-function-url'; // Replace with your cloud function URL
+    fetch('fucntionURL')
+     .then(response => {
+      if(!response.ok) {
+        throw new Error('HTTP error: Status: ${response.status}');
+      } 
+    return response.json(); // Parse the JSON response
+    
+    })
+    .then(data=> {
+     document.getElementById('visitor-count').textContent = data.visitorcount;  //access the visitor count from the JSON response
+     })
+     .catch(error => {
+     console.error('Error fetching visitor count:', error);
+    document.getElementById("visitor-count").textContent = "Error fetching count";
+      });
+    });
+    
+    </script>
+  <hr />
+  <br>
+  <p class="head">Certifications</p>
+  <ul>
+    <li>AZ-104 Azure Administrator</li>
+    <li>CompTIA Project+</li>
+    <li>ITIL Foundations 4.0</li>
+    <li>CompTIA Server+</li>
+    <li>CompTIA Security+</li>
+    <li>CompTIA Secure Cloud Professional</li>
+    <li>CompTIA Secure Infrastructure Specialist</li>
+    <li>AWS Cloud Practitioner</li>
+    <li>Linux Essentials</li>
+	<li>CompTIA Cloud+</li>
+  </ul>
+  <p class="head">Skills</p>
+  <ul>
+    <li>System Administration</li>
+    <li>HA Enterprise File Server Management</li>
+    <li>Virtualization</li>
+    <li>Solarwinds</li>
+    <li>High Availability/Cluser Management</li>
+	<li>Enterprise Architecture</li>
+  </ul>
+  <p class="head">Education</p>
+  <ul>
+    <a href="https://www.wgu.edu">
+      <li>Western Governors University</li>
+    </a>
+    <!--Link-->
+    <a href="https://www.ecpi.edu/">
+      <li>ECPI University</li>
+    </a>
+  </ul>
+  <p class="head">Experience</p>
+  <ul>
+    <li>Enterprise Services Engineer</li>
+    <li>Lead Information Technology Infrastructure Specialist</li>
+  </ul>
+</div>
+<div class="right"></div>
+<div id="footer">
+  <h2 id="name">Christopher</h2>
+</div>
+</body>
+</html>
