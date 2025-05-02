@@ -29,10 +29,10 @@ def VisitorCounter(req: func.HttpRequest) -> func.HttpResponse:
     try:
         #Get keyvault url and secret names from environment variables
         KEY_VAULT_URL = os.environ.get("KEY_VAULT_URL")
-        table_connection_string_secret_name = os.environ.get("COSMOS_DB_CONNECTION_STRING_SECRET")
-        table_name = "TablesDB"
+        table_connection_string_secret_name = os.environ.get("COSMOS_TABLE_CONNECTION_STRING_SECRET")
+        table_name = "VisitorCount"
         partition_key = "VisitorCount"
-        row_key = "count"
+        row_key = "1"
 
         if not KEY_VAULT_URL or not table_connection_string_secret_name:
             logging.error("Key Vault URL or Cosmos DB Table connection string secret is not set in environment variables.")
@@ -42,7 +42,7 @@ def VisitorCounter(req: func.HttpRequest) -> func.HttpResponse:
             )
         
         # Get the connection string from Key Vault
-        table_connection_string = get_secret(KEY_VAULT_URL, table_connection_string_secret_name)
+        table_connection_string = get_secret(table_connection_string_secret_name)
 
         #Initialize the TableServiceClient
         table_service_client = TableServiceClient.from_connection_string(conn_str=table_connection_string)
