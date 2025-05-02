@@ -28,7 +28,7 @@ def VisitorCounter(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         #Get keyvault url and secret names from environment variables
-        KEY_VAULT_URL = os.environ.get["KEY_VAULT_URL"]
+        KEY_VAULT_URL = os.environ.get("KEY_VAULT_URL")
         table_connection_string_secret_name = os.environ.get("COSMOS_DB_CONNECTION_STRING_SECRET")
         table_name = "TablesDB"
         partition_key = "VisitorCount"
