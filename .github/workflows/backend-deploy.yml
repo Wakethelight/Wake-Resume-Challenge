@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # Or your desired Python version
+          python-version: '3.9' # Or your desired Python version
 
       - name: Navigate to backend directory
         run: cd backend
