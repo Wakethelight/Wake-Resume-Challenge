@@ -24,15 +24,16 @@ jobs:
         python-version: "3.9"  # Adjust based on your function requirements
 
     - name: Install dependencies
+      working-directory: backend
       run: |
         python -m pip install --upgrade pip --target=".python_packages/lib/site-packages"
-        pip install -r requirements.txt
-        pip install azure-functions
-        pip install azure-data-tables
+        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
 
     - name: Create deployment ZIP
       run: |
+        cd backend
         zip -r functionapp.zip . -x "*.git*" "README.md"
+        cd ..
         
     - name: Deploy to Azure Functions via CLI
       run: |
@@ -40,6 +41,7 @@ jobs:
         --resource-group wake-function-apps \
         --name ${{ secrets.AZURE_FUNCTIONAPP_NAME }} \
         --src functionapp.zip
+        
     - name: Logout from Azure
       run: az logout
 
