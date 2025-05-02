@@ -34,7 +34,12 @@ jobs:
         cd backend
         zip -r functionapp.zip . -x "*.git*" "README.md"
         cd ..
-        
+    - name: upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: functionapp.zip
+        path: backend/functionapp.zip
+            
     - name: Deploy to Azure Functions via CLI
       run: |
         az functionapp deployment source config-zip \
