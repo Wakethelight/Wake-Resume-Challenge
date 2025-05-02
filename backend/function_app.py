@@ -20,6 +20,7 @@ def get_secret(secret_name):
     # Retrieve the secret value
     return secret.value
 
+@app.function_name(name="VisitorCounter")
 @app.route(route="VisitorCounter", auth_level=func.AuthLevel.ANONYMOUS)
 
 def VisitorCounter(req: func.HttpRequest) -> func.HttpResponse:
