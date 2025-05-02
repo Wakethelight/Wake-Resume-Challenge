@@ -11,7 +11,7 @@ app = func.FunctionApp()
 
 def get_secret(secret_name):
     # Get the Key Vault URL from the environment variable
-    KEY_VAULT_URL = os.environ["KEY_VAULT_URL", "https://primary-wow-vault.vault.azure.net/"]
+    KEY_VAULT_URL = os.environ.get("KEY_VAULT_URL", "https://primary-wow-vault.vault.azure.net/")
     
     # Create a SecretClient using DefaultAzureCredential
     credential = DefaultAzureCredential()
