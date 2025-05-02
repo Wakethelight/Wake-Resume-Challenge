@@ -36,7 +36,7 @@ jobs:
     - name: Create deployment ZIP
       run: |
         cd backend
-        zip -r functionapp.zip . -x "*.git*" "README.md"
+        zip -r ../functionapp.zip . -x "*.git*" "README.md"
         cd ..
 
     - name: Upload artifact
