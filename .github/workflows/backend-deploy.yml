@@ -61,6 +61,6 @@ jobs:
         with:
           app-name: '${{ secrets.AZURE_FUNCTIONAPP_NAME }}' # Replace with your Function App name in Azure
           package: './functionapp.zip'
-
+          
       - name: Logout from Azure
         run: az logout
