@@ -7,6 +7,7 @@ on:
 
 env:
   BACKEND_PATH: './backend'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   FUNCTION_APP_PACKAGE_NAME: 'functionapp.zip'
 
 jobs:
@@ -25,8 +26,7 @@ jobs:
     - name: Navigate to backend and install dependencies
       working-directory: ${{ env.BACKEND_PATH }}
       run: |
-        ls
-        pushd '${{ env.BACKEND_PATH }}'
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/site-packages"
 
