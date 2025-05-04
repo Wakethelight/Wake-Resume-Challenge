@@ -5,62 +5,46 @@ on:
     branches:
       - main # Or your main development branch
 
+env:
+  BACKEND_PATH: './backend'
+  FUNCTION_APP_PACKAGE_NAME: 'functionapp.zip'
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Set up Python version
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11' # Or your desired Python version
+    - name: Set up Python version
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Navigate to backend directory
-        run: cd backend
+    - name: Navigate to backend and install dependencies
+      working-directory: ${{ env.BACKEND_PATH }}
+      run: |
+        python -m pip install --upgrade pip
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install -r requirements.txt
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          ls
-          pip install -r backend/requirements.txt
+    - name: Zip function app files
+      working-directory: ${{ env.BACKEND_PATH }}
+      run: |
+        zip -r ${{ env.FUNCTION_APP_PACKAGE_NAME }} .venv function_app.py host.json requirements.txt
 
-      - name: Zip function app files
-        run: |
-          cd backend
-          ls
-          zip -r ../functionapp.zip . -x ".git*" "venv*" "__pycache__*" ".vscode*"
+    - name: Deploy to Azure Function App (Zip Push)
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Upload artifact for deployment
-        uses: actions/upload-artifact@v4
-        with:
-          name: functionapp-package
-          path: functionapp.zip
+    - name: Deploy Function App
+      uses: azure/functions-action@v1
+      with:
+        app-name: '${{ secrets.AZURE_FUNCTIONAPP_NAME }}'
+        package: '${{ env.BACKEND_PATH }}/${{ env.FUNCTION_APP_PACKAGE_NAME }}'
 
-  deploy:
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: functionapp-package
-          path: .
-
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Deploy to Azure Function App (Zip Push)
-        id: deploy-to-azure
-        uses: azure/functions-action@v1
-        with:
-          app-name: '${{ secrets.AZURE_FUNCTIONAPP_NAME }}' # Replace with your Function App name in Azure
-          package: './functionapp.zip'
-          
-      - name: Logout from Azure
-        run: az logout
+    - name: Logout from Azure
+      run: az logout
