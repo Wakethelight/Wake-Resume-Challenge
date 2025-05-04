@@ -33,11 +33,13 @@ def VisitorCounter(req: func.HttpRequest) -> func.HttpResponse:
         table_name = "VisitorCount"
         partition_key = "VisitorCount"
         row_key = "1"
+        test_value = os.environ.get("TEST_VAR")
+        logging.info(f"Test variable value: {test_value}")
 
         if not KEY_VAULT_URL or not table_connection_string_secret_name:
             logging.error("Key Vault URL or Cosmos DB Table connection string secret is not set in environment variables.")
             return func.HttpResponse(
-                "Key Vault URL, Cosmos DB URL, or Cosmos DB Key is not set in environment variables.", 
+                "Key Vault URL or Cosmos DB Table connection string secret is not set in environment variables.", 
                 status_code=500
             )
         
