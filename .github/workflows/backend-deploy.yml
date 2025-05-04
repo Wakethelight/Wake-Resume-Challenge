@@ -25,10 +25,9 @@ jobs:
     - name: Navigate to backend and install dependencies
       working-directory: ${{ env.BACKEND_PATH }}
       run: |
+        pushd './${{ env.BACKEND_PATH }}'
         python -m pip install --upgrade pip
-        python -m venv .venv
-        source .venv/bin/activate
-        pip install -r requirements.txt
+        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
 
     - name: Zip function app files
       working-directory: ${{ env.BACKEND_PATH }}
