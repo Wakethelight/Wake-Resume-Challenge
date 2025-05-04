@@ -25,6 +25,7 @@ jobs:
     - name: Navigate to backend and install dependencies
       working-directory: ${{ env.BACKEND_PATH }}
       run: |
+        ls
         pushd '${{ env.BACKEND_PATH }}'
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/site-packages"
@@ -45,6 +46,8 @@ jobs:
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         app-name: '${{ secrets.AZURE_FUNCTIONAPP_NAME }}'
         package: '${{ env.BACKEND_PATH }}/${{ env.FUNCTION_APP_PACKAGE_NAME }}'
+        scm-do-build-during-deployment: true
+        enable-oryx-build: true
 
     - name: Logout from Azure
       run: az logout
