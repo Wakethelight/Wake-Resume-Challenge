@@ -6,4 +6,3 @@ azure-functions
 azure-identity
 azure-keyvault-secrets
 azure-data-tables
-cryptography == 43.0.3
